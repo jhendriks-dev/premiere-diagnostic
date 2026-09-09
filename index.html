@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +29,6 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
 
-    <!-- Navigation Header -->
     <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
         <div class="flex items-center gap-3">
             <div class="bg-purple-600 text-white p-2.5 rounded-xl flex items-center justify-center font-bold shadow-lg shadow-purple-900/40">
@@ -55,7 +54,6 @@
         </div>
     </header>
 
-    <!-- Settings Modal for Google Sheet URL -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl">
             <div class="flex justify-between items-center mb-4">
@@ -81,7 +79,6 @@
         </div>
     </div>
 
-    <!-- Main Content Container -->
     <main class="flex-1 max-w-5xl w-full mx-auto p-4 md:p-6 flex flex-col">
 
         <!-- STEP 1: Registration View -->
@@ -100,7 +97,7 @@
                     <input type="text" id="student-name" required placeholder="e.g. Alex Morgan" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Class*</label>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Class / Group *</label>
                     <input type="text" id="student-id" required placeholder="e.g. 12JHe or 12GCh" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
                 </div>
 
@@ -175,7 +172,7 @@
                             <i class="fa-solid fa-film"></i> UAL Level 3 Creative Media
                         </div>
                         <h1 class="text-2xl font-extrabold text-slate-900">Premiere Pro Diagnostic Report</h1>
-                        <p class="text-xs text-slate-500 mt-0.5">Year 12 Initial Knowledge & Skill Assessment</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Year 12 Baseline Knowledge & Skill Assessment</p>
                     </div>
                     <div class="text-right">
                         <div class="text-3xl font-extrabold text-purple-700" id="pdf-score-display">0 / 30</div>
@@ -190,7 +187,7 @@
                         <span id="pdf-student-name" class="font-bold text-slate-800 text-sm">--</span>
                     </div>
                     <div>
-                        <span class="text-slate-400 block font-medium">Student ID:</span>
+                        <span class="text-slate-400 block font-medium">Class / Group:</span>
                         <span id="pdf-student-id" class="font-bold text-slate-800 text-sm">--</span>
                     </div>
                     <div>
@@ -212,7 +209,7 @@
                         </ul>
                     </div>
 
-                    <!-- Areas for Improvement -->
+                    <!-- Areas for Development -->
                     <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-5">
                         <h3 class="text-sm font-bold text-amber-800 flex items-center gap-2 mb-3">
                             <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
@@ -234,7 +231,7 @@
 
                 <!-- Footer -->
                 <div class="pt-4 border-t border-slate-200 text-center text-[10px] text-slate-400">
-                    UAL Creative Media Production & Technology • Premier Pro Baseline Diagnostic Tool
+                    UAL Creative Media Production & Technology • Premiere Pro Baseline Diagnostic Tool
                 </div>
             </div>
         </section>
@@ -242,19 +239,19 @@
     </main>
 
     <script>
-        // CONFIGURATION: Paste your Google Apps Script Web App URL between the quotes below
+        // CONFIGURATION: Google Apps Script Web App URL
         const DEFAULT_GSHEET_URL = "https://script.google.com/macros/s/AKfycbwDDaNhMXqWhjRCyWzhqs2VnKOUZ_85grderfQ7w0uoJ1HN9S3RFn1NTSiwBI9E13hQ/exec";
 
-        // 30 Assessment Questions across 5 Domains
+        // 30 Assessment Questions across 5 Domains (British English and UK Broadcasting Standards)
         const questions = [
             // Domain 1: Basic Tools & Interface (6 Questions)
             {
                 id: 1,
                 domain: 1,
-                question: "Which workspace panel in Premiere Pro is primarily used to organize, import, and search for source media files?",
+                question: "Which workspace panel in Premiere Pro is primarily used to organise, import, and search for source media files?",
                 options: ["Program Monitor", "Timeline Panel", "Project Panel", "Source Monitor"],
                 correct: 2,
-                tip: "Project Panel organization"
+                tip: "Project Panel organisation"
             },
             {
                 id: 2,
@@ -325,10 +322,10 @@
             {
                 id: 10,
                 domain: 2,
-                question: "What frame rate (fps) is commonly used to produce a traditional 'cinematic' motion feel?",
-                options: ["60 fps", "23.976 / 24 fps", "120 fps", "15 fps"],
+                question: "What is the standard broadcast frame rate (fps) used in UK television and PAL video production?",
+                options: ["60 fps", "25 fps", "29.97 fps", "120 fps"],
                 correct: 1,
-                tip: "24fps cinematic frame rate"
+                tip: "25fps UK/PAL broadcast standard"
             },
             {
                 id: 11,
@@ -367,7 +364,7 @@
             {
                 id: 15,
                 domain: 3,
-                question: "Which effect tool panel in Premiere allows you to quickly assign audio types (e.g., Dialogue, Music) for automated leveling and clarity?",
+                question: "Which effect tool panel in Premiere allows you to quickly assign audio types (e.g., Dialogue, Music) for automated levelling and clarity?",
                 options: ["Audio Track Mixer", "Essential Sound Panel", "Lumetri Color", "Audio Gain Window"],
                 correct: 1,
                 tip: "Essential Sound panel workflow"
@@ -392,24 +389,24 @@
                 id: 18,
                 domain: 3,
                 question: "What transition is most effective for preventing harsh pops/clicks between adjacent audio cuts?",
-                options: ["Exponential Fade / Constant Power", "Cross Dissolve", "Dip to Black", "Morph Cut"],
+                options: ["Constant Power / Crossfade", "Dip to Black", "Morph Cut", "Iris Wipe"],
                 correct: 0,
                 tip: "Audio crossfade transitions"
             },
 
-            // Domain 4: Color Correction & Grading (6 Questions)
+            // Domain 4: Lumetri Colour & Correction (6 Questions)
             {
                 id: 19,
                 domain: 4,
-                question: "Which specialized panel is the main workspace for color correction and grading in Premiere Pro?",
-                options: ["Lumetri Color Panel", "Color Matte Panel", "Effect Controls", "Metadata Panel"],
+                question: "Which specialized panel is the main workspace for colour correction and grading in Premiere Pro?",
+                options: ["Lumetri Color Panel", "Colour Matte Panel", "Effect Controls", "Metadata Panel"],
                 correct: 0,
                 tip: "Lumetri Color workspace"
             },
             {
                 id: 20,
-                domain: 20,
-                question: "What adjustment fixes an unintended warm (yellow) or cool (blue) tint in your footage?",
+                domain: 4,
+                question: "What adjustment fixes an unintended warm (yellow) or cool (blue) colour tint in your footage?",
                 options: ["Saturation", "White Balance (Temperature)", "Contrast", "Vignette"],
                 correct: 1,
                 tip: "White Balance adjustment"
@@ -417,7 +414,7 @@
             {
                 id: 21,
                 domain: 4,
-                question: "What does 'LUT' stand for in professional color grading workflows?",
+                question: "What does 'LUT' stand for in professional colour grading workflows?",
                 options: ["Light Upper Tone", "Look Up Table", "Linear Ultimate Track", "Layered Utility Template"],
                 correct: 1,
                 tip: "Look Up Table (LUT) definition"
@@ -425,15 +422,15 @@
             {
                 id: 22,
                 domain: 4,
-                question: "Which tool or layer should you place above multiple video clips to apply a single unified color grade to all clips at once?",
-                options: ["Color Matte", "Adjustment Layer", "Transparent Video", "Nested Sequence"],
+                question: "Which tool or layer should you place above multiple video clips to apply a single unified colour grade to all clips at once?",
+                options: ["Colour Matte", "Adjustment Layer", "Transparent Video", "Nested Sequence"],
                 correct: 1,
-                tip: "Adjustment Layer color grading"
+                tip: "Adjustment Layer colour grading"
             },
             {
                 id: 23,
                 domain: 4,
-                question: "What Lumetri slider specifically controls the intensity/vibrancy of duller colors without oversaturating already bright skin tones?",
+                question: "Which Lumetri slider specifically controls the intensity/vibrancy of duller colours without oversaturating already bright skin tones?",
                 options: ["Saturation", "Vibrance", "Exposure", "Shadows"],
                 correct: 1,
                 tip: "Vibrance vs Saturation control"
@@ -441,13 +438,13 @@
             {
                 id: 24,
                 domain: 4,
-                question: "In primary color correction, what does lowering the 'Blacks' slider do?",
-                options: ["Makes white areas darker", "Deepens the darkest shadow points in the image", "Blurs the background", "Removes color saturation"],
+                question: "In primary colour correction, what does lowering the 'Blacks' slider do?",
+                options: ["Makes white areas darker", "Deepens the darkest shadow points in the image", "Blurs the background", "Removes colour saturation"],
                 correct: 1,
                 tip: "Shadows and Blacks tonal adjustment"
             },
 
-            // Domain 5: Exporting & Codecs (6 Questions)
+            // Domain 5: Exporting & Media Codecs (6 Questions)
             {
                 id: 25,
                 domain: 5,
@@ -492,18 +489,18 @@
                 id: 30,
                 domain: 5,
                 question: "What does 'Bitrate' in export settings directly affect?",
-                options: ["Video frame rate speed", "File size and visual compression quality", "Audio volume level", "Color temperature"],
+                options: ["Video frame rate speed", "File size and visual compression quality", "Audio volume level", "Colour temperature"],
                 correct: 1,
                 tip: "Bitrate impact on quality & size"
             }
         ];
 
-        // Domain Titles Mapping
+        // Domain Titles Mapping (British English)
         const DOMAINS = {
             1: { title: "Interface & Editing Tools", desc: "Navigating Premiere, shortkeys, and timeline tools." },
-            2: { title: "Sequences & Aspect Ratios", desc: "Resolution settings, frame rates, and video dimensions." },
-            3: { title: "Audio Editing & Leveling", desc: "Audio levels, essential sound, keyframes, and crossfades." },
-            4: { title: "Lumetri Color & Correction", desc: "Color grading, white balance, LUTs, and adjustment layers." },
+            2: { title: "Sequences & Aspect Ratios", desc: "Resolution settings, UK frame rates, and video dimensions." },
+            3: { title: "Audio Editing & Levelling", desc: "Audio levels, essential sound, keyframes, and crossfades." },
+            4: { title: "Lumetri Colour & Correction", desc: "Colour grading, white balance, LUTs, and adjustment layers." },
             5: { title: "Exporting & Media Codecs", desc: "H.264 formats, render settings, and export workflows." }
         };
 
@@ -721,8 +718,6 @@
             strengthsList.innerHTML = "";
             improvementsList.innerHTML = "";
 
-            var strongDomainsCount = 0;
-
             Object.keys(DOMAINS).forEach(function(dKey) {
                 var domainId = parseInt(dKey);
                 var score = domainScores[domainId];
@@ -730,7 +725,6 @@
                 var domainPct = Math.round((score / total) * 100);
 
                 if (domainPct >= 65) {
-                    strongDomainsCount++;
                     var li = document.createElement('li');
                     li.className = "flex items-start gap-2";
                     li.innerHTML = '<i class="fa-solid fa-check text-emerald-600 mt-0.5"></i> <span><strong>' + DOMAINS[domainId].title + ':</strong> Demonstrates strong mastery (' + score + '/' + total + ').</span>';
@@ -752,7 +746,7 @@
             if (improvementsList.children.length === 0) {
                 var congratsLi = document.createElement('li');
                 congratsLi.className = "flex items-start gap-2";
-                congratsLi.innerHTML = '<i class="fa-solid fa-award text-amber-600 mt-0.5"></i> <span><strong>High Proficiency:</strong> Excellent performance across all core modules! Focus on advanced multicam and color grading workflows.</span>';
+                congratsLi.innerHTML = '<i class="fa-solid fa-award text-amber-600 mt-0.5"></i> <span><strong>High Proficiency:</strong> Excellent performance across all core modules! Focus on advanced multicam and colour grading workflows.</span>';
                 improvementsList.appendChild(congratsLi);
             }
 
