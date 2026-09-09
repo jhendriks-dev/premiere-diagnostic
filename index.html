@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAL Year 12 Premiere Pro Diagnostic Assessment</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js for Client-Side PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Navigation Header -->
+    <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="bg-purple-600 text-white p-2.5 rounded-xl flex items-center justify-center font-bold shadow-lg shadow-purple-900/40">
+                <i class="fa-solid fa-film text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold text-white leading-tight">UAL Level 3 Creative Media</h1>
+                <p class="text-xs text-purple-400 font-medium">Year 12 Premiere Pro Skill Diagnostic</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <!-- Timer Display -->
+            <div id="timer-badge" class="hidden items-center gap-2 bg-slate-900/80 border border-slate-700 px-3 py-1.5 rounded-lg text-sm font-mono text-slate-300">
+                <i class="fa-regular fa-clock text-purple-400"></i>
+                <span id="timer-text">00:00</span>
+            </div>
+
+            <!-- GSheet Settings Toggle Button -->
+            <button onclick="toggleSettingsModal()" title="Google Sheets Setup" class="bg-slate-700 hover:bg-slate-600 text-slate-300 p-2 rounded-lg transition-colors border border-slate-600">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Settings Modal for Google Sheet URL -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-table text-emerald-400"></i>
+                    Google Sheet Integration
+                </h3>
+                <button onclick="toggleSettingsModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-400 mb-4">
+                Paste your Google Apps Script Web App URL below so student results are sent straight to your spreadsheet.
+            </p>
+            <div class="mb-4">
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Web App URL</label>
+                <input type="url" id="gsheet-url-input" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-purple-500">
+            </div>
+            <div class="flex justify-end gap-3">
+                <button onclick="toggleSettingsModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-semibold text-slate-300">Cancel</button>
+                <button onclick="saveGSheetUrl()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 rounded-lg text-xs font-semibold text-white shadow-lg shadow-purple-900/50">Save URL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 md:p-6 flex flex-col">
+
+        <!-- STEP 1: Registration View -->
+        <section id="registration-view" class="my-auto max-w-md mx-auto w-full bg-slate-800/90 border border-slate-700 rounded-2xl p-6 md:p-8 shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="inline-flex p-3 bg-purple-500/10 border border-purple-500/30 rounded-2xl text-purple-400 mb-3">
+                    <i class="fa-solid fa-user-graduate text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Student Entry</h2>
+                <p class="text-xs text-slate-400 mt-1">Please enter your details before starting the diagnostic check.</p>
+            </div>
+
+            <form id="start-form" onsubmit="startAssessment(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Full Name *</label>
+                    <input type="text" id="student-name" required placeholder="e.g. Alex Morgan" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Class*</label>
+                    <input type="text" id="student-id" required placeholder="e.g. 12JHe or 12GCh" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500">
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-purple-900/50 flex items-center justify-center gap-2 group">
+                        <span>Begin Diagnostic</span>
+                        <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- STEP 2: Assessment View -->
+        <section id="assessment-view" class="hidden flex-1 flex flex-col gap-6">
+            <!-- Progress Bar -->
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4">
+                <div class="flex justify-between items-center text-xs text-slate-400 mb-2">
+                    <span id="question-progress-label">Question 1 of 30</span>
+                    <span id="domain-badge" class="bg-purple-500/20 text-purple-300 px-2.5 py-0.5 rounded-full font-medium">Domain 1</span>
+                </div>
+                <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-700/50">
+                    <div id="progress-bar-fill" class="bg-purple-500 h-full transition-all duration-300" style="width: 3.33%"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 md:p-8 flex-1 flex flex-col justify-between shadow-xl">
+                <div>
+                    <h3 id="question-title" class="text-lg md:text-xl font-bold text-white mb-6 leading-snug">
+                        Question text goes here?
+                    </h3>
+                    
+                    <!-- Options Grid -->
+                    <div id="options-container" class="space-y-3">
+                        <!-- Dynamically populated options -->
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center border-t border-slate-700/80 pt-6 mt-8">
+                    <button id="prev-btn" onclick="prevQuestion()" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm font-semibold rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i class="fa-solid fa-chevron-left mr-2"></i> Previous
+                    </button>
+
+                    <button id="next-btn" onclick="nextQuestion()" class="px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold rounded-xl transition-colors shadow-lg shadow-purple-900/40">
+                        Next <i class="fa-solid fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 3: Report View -->
+        <section id="report-view" class="hidden space-y-6">
+            <!-- Top Controls Bar -->
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-white">Diagnostic Summary Complete</h2>
+                    <p class="text-xs text-slate-400">Review your feedback below and download your official PDF report.</p>
+                </div>
+                <button onclick="downloadPDFReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-lg shadow-emerald-900/40 flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>Download PDF Report</span>
+                </button>
+            </div>
+
+            <!-- Printable PDF Area -->
+            <div id="pdf-report-content" class="bg-white text-slate-900 rounded-2xl p-8 border border-slate-200 shadow-xl space-y-6">
+                <!-- Header -->
+                <div class="border-b border-slate-200 pb-6 flex justify-between items-start">
+                    <div>
+                        <div class="flex items-center gap-2 text-purple-700 font-bold text-sm tracking-wider uppercase mb-1">
+                            <i class="fa-solid fa-film"></i> UAL Level 3 Creative Media
+                        </div>
+                        <h1 class="text-2xl font-extrabold text-slate-900">Premiere Pro Diagnostic Report</h1>
+                        <p class="text-xs text-slate-500 mt-0.5">Year 12 Initial Knowledge & Skill Assessment</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-extrabold text-purple-700" id="pdf-score-display">0 / 30</div>
+                        <div class="text-xs font-semibold text-slate-500" id="pdf-percent-display">0% Overall Accuracy</div>
+                    </div>
+                </div>
+
+                <!-- Student Info Box -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+                    <div>
+                        <span class="text-slate-400 block font-medium">Student Name:</span>
+                        <span id="pdf-student-name" class="font-bold text-slate-800 text-sm">--</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-medium">Student ID:</span>
+                        <span id="pdf-student-id" class="font-bold text-slate-800 text-sm">--</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block font-medium">Date Completed:</span>
+                        <span id="pdf-date" class="font-bold text-slate-800 text-sm">--</span>
+                    </div>
+                </div>
+
+                <!-- Feedback Grid: Key Strengths & Areas for Improvement -->
+                <div class="grid md:grid-cols-2 gap-6 pt-2">
+                    <!-- Key Strengths -->
+                    <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-5">
+                        <h3 class="text-sm font-bold text-emerald-800 flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                            Key Strengths
+                        </h3>
+                        <ul id="pdf-strengths-list" class="space-y-2.5 text-xs text-emerald-950">
+                            <!-- Populated dynamically -->
+                        </ul>
+                    </div>
+
+                    <!-- Areas for Improvement -->
+                    <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-5">
+                        <h3 class="text-sm font-bold text-amber-800 flex items-center gap-2 mb-3">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
+                            Areas for Development
+                        </h3>
+                        <ul id="pdf-improvements-list" class="space-y-2.5 text-xs text-amber-950">
+                            <!-- Populated dynamically -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Domain Performance Breakdown -->
+                <div class="pt-4 border-t border-slate-200">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Module Breakdown</h3>
+                    <div id="pdf-domain-breakdown" class="space-y-2.5">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="pt-4 border-t border-slate-200 text-center text-[10px] text-slate-400">
+                    UAL Creative Media Production & Technology • Premier Pro Baseline Diagnostic Tool
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // CONFIGURATION: Paste your Google Apps Script Web App URL between the quotes below
+        const DEFAULT_GSHEET_URL = "https://script.google.com/macros/s/AKfycbwDDaNhMXqWhjRCyWzhqs2VnKOUZ_85grderfQ7w0uoJ1HN9S3RFn1NTSiwBI9E13hQ/exec";
+
+        // 30 Assessment Questions across 5 Domains
+        const questions = [
+            // Domain 1: Basic Tools & Interface (6 Questions)
+            {
+                id: 1,
+                domain: 1,
+                question: "Which workspace panel in Premiere Pro is primarily used to organize, import, and search for source media files?",
+                options: ["Program Monitor", "Timeline Panel", "Project Panel", "Source Monitor"],
+                correct: 2,
+                tip: "Project Panel organization"
+            },
+            {
+                id: 2,
+                domain: 1,
+                question: "What is the primary keyboard shortcut to select the Selection Tool in Premiere Pro?",
+                options: ["C", "V", "A", "B"],
+                correct: 1,
+                tip: "Selection Tool shortcut (V)"
+            },
+            {
+                id: 3,
+                domain: 1,
+                question: "Which tool allows you to split a clip directly on the Timeline into two separate segments?",
+                options: ["Track Select Forward Tool", "Razor Tool", "Ripple Edit Tool", "Slip Tool"],
+                correct: 1,
+                tip: "Razor Tool splitting (C)"
+            },
+            {
+                id: 4,
+                domain: 1,
+                question: "What does pressing the Spacebar key do when working in Premiere Pro?",
+                options: ["Splits the selected clip", "Starts/Stops Timeline Playback", "Renders video in/out", "Saves project file"],
+                correct: 1,
+                tip: "Spacebar playback control"
+            },
+            {
+                id: 5,
+                domain: 1,
+                question: "Where do you view the actual edited video program output from your Timeline sequence?",
+                options: ["Source Monitor", "Program Monitor", "Audio Track Mixer", "Effect Controls"],
+                correct: 1,
+                tip: "Program Monitor playback view"
+            },
+            {
+                id: 6,
+                domain: 1,
+                question: "Which keyboard shortcut toggles full-screen mode for whichever panel your mouse cursor is hovering over?",
+                options: ["Tab key", "Tilde (~) key", "Escape key", "F11 key"],
+                correct: 1,
+                tip: "Tilde (~) key panel maximize"
+            },
+
+            // Domain 2: Sequence Settings & Aspect Ratios (6 Questions)
+            {
+                id: 7,
+                domain: 2,
+                question: "What is the standard Full HD widescreen aspect ratio format used in traditional video editing?",
+                options: ["1:1 (Square)", "9:16 (Vertical)", "16:9 (Widescreen)", "4:3 (Legacy)"],
+                correct: 2,
+                tip: "16:9 widescreen dimensions"
+            },
+            {
+                id: 8,
+                domain: 2,
+                question: "What frame resolution corresponds to standard Full HD (1080p)?",
+                options: ["3840 x 2160", "1280 x 720", "1920 x 1080", "1080 x 1920"],
+                correct: 2,
+                tip: "1920x1080 HD pixel dimensions"
+            },
+            {
+                id: 9,
+                domain: 2,
+                question: "Which aspect ratio is standard for vertical mobile content like TikTok and Instagram Reels?",
+                options: ["16:9", "9:16", "4:5", "21:9"],
+                correct: 1,
+                tip: "9:16 vertical video framing"
+            },
+            {
+                id: 10,
+                domain: 2,
+                question: "What frame rate (fps) is commonly used to produce a traditional 'cinematic' motion feel?",
+                options: ["60 fps", "23.976 / 24 fps", "120 fps", "15 fps"],
+                correct: 1,
+                tip: "24fps cinematic frame rate"
+            },
+            {
+                id: 11,
+                domain: 2,
+                question: "If your imported clip does not match your sequence dimensions, which right-click option scales it without distorting its pixel proportions?",
+                options: ["Scale to Frame Size", "Set to Frame Size", "Nest Sequence", "Speed/Duration"],
+                correct: 1,
+                tip: "Set to Frame Size usage"
+            },
+            {
+                id: 12,
+                domain: 2,
+                question: "What happens when you drop a media clip onto an empty timeline area or the 'New Item' button?",
+                options: ["Premiere deletes the clip", "It automatically creates a Sequence matching clip settings", "It exports the clip immediately", "It converts the file format"],
+                correct: 1,
+                tip: "Auto-sequence creation from media"
+            },
+
+            // Domain 3: Essential Audio Editing (6 Questions)
+            {
+                id: 13,
+                domain: 3,
+                question: "What audio level range in dBFS is generally targeted for main clear dialogue peaks in broadcast/online editing?",
+                options: ["0 to +6 dB", "-6 to -12 dB", "-24 to -30 dB", "0 dB maximum continuous"],
+                correct: 1,
+                tip: "Dialogue level metering (-6dB to -12dB)"
+            },
+            {
+                id: 14,
+                domain: 3,
+                question: "What occurs to your audio if the peak meter reaches or exceeds 0 dBFS?",
+                options: ["Audio gets automatically boosted", "Digital Distortion / Clipping occurs", "The clip is muted automatically", "Noise reduction turns on"],
+                correct: 1,
+                tip: "Audio clipping & 0dB threshold"
+            },
+            {
+                id: 15,
+                domain: 3,
+                question: "Which effect tool panel in Premiere allows you to quickly assign audio types (e.g., Dialogue, Music) for automated leveling and clarity?",
+                options: ["Audio Track Mixer", "Essential Sound Panel", "Lumetri Color", "Audio Gain Window"],
+                correct: 1,
+                tip: "Essential Sound panel workflow"
+            },
+            {
+                id: 16,
+                domain: 3,
+                question: "What is the purpose of applying Keyframes to an audio volume rubber band on the Timeline?",
+                options: ["To change audio pitch", "To automate volume changes and fades over time", "To clean background hiss", "To sync video to audio"],
+                correct: 1,
+                tip: "Audio volume keyframing"
+            },
+            {
+                id: 17,
+                domain: 3,
+                question: "How can you instantly adjust gain for an entire selected audio clip?",
+                options: ["Press 'G' key to open Audio Gain", "Press 'C' key to cut audio", "Right-click and select Speed", "Drag the razor tool"],
+                correct: 0,
+                tip: "Audio Gain shortcut (G)"
+            },
+            {
+                id: 18,
+                domain: 3,
+                question: "What transition is most effective for preventing harsh pops/clicks between adjacent audio cuts?",
+                options: ["Exponential Fade / Constant Power", "Cross Dissolve", "Dip to Black", "Morph Cut"],
+                correct: 0,
+                tip: "Audio crossfade transitions"
+            },
+
+            // Domain 4: Color Correction & Grading (6 Questions)
+            {
+                id: 19,
+                domain: 4,
+                question: "Which specialized panel is the main workspace for color correction and grading in Premiere Pro?",
+                options: ["Lumetri Color Panel", "Color Matte Panel", "Effect Controls", "Metadata Panel"],
+                correct: 0,
+                tip: "Lumetri Color workspace"
+            },
+            {
+                id: 20,
+                domain: 20,
+                question: "What adjustment fixes an unintended warm (yellow) or cool (blue) tint in your footage?",
+                options: ["Saturation", "White Balance (Temperature)", "Contrast", "Vignette"],
+                correct: 1,
+                tip: "White Balance adjustment"
+            },
+            {
+                id: 21,
+                domain: 4,
+                question: "What does 'LUT' stand for in professional color grading workflows?",
+                options: ["Light Upper Tone", "Look Up Table", "Linear Ultimate Track", "Layered Utility Template"],
+                correct: 1,
+                tip: "Look Up Table (LUT) definition"
+            },
+            {
+                id: 22,
+                domain: 4,
+                question: "Which tool or layer should you place above multiple video clips to apply a single unified color grade to all clips at once?",
+                options: ["Color Matte", "Adjustment Layer", "Transparent Video", "Nested Sequence"],
+                correct: 1,
+                tip: "Adjustment Layer color grading"
+            },
+            {
+                id: 23,
+                domain: 4,
+                question: "What Lumetri slider specifically controls the intensity/vibrancy of duller colors without oversaturating already bright skin tones?",
+                options: ["Saturation", "Vibrance", "Exposure", "Shadows"],
+                correct: 1,
+                tip: "Vibrance vs Saturation control"
+            },
+            {
+                id: 24,
+                domain: 4,
+                question: "In primary color correction, what does lowering the 'Blacks' slider do?",
+                options: ["Makes white areas darker", "Deepens the darkest shadow points in the image", "Blurs the background", "Removes color saturation"],
+                correct: 1,
+                tip: "Shadows and Blacks tonal adjustment"
+            },
+
+            // Domain 5: Exporting & Codecs (6 Questions)
+            {
+                id: 25,
+                domain: 5,
+                question: "What is the standard, highly efficient video format/codec widely used for Web and YouTube delivery?",
+                options: ["ProRes 4444", "H.264 / MP4", "Animation AVI", "Uncompressed QuickTime"],
+                correct: 1,
+                tip: "H.264 MP4 export standard"
+            },
+            {
+                id: 26,
+                domain: 5,
+                question: "Which keyboard shortcut opens the Export Media modal window in Premiere Pro?",
+                options: ["Ctrl/Cmd + E", "Ctrl/Cmd + M", "Ctrl/Cmd + S", "Ctrl/Cmd + Shift + X"],
+                correct: 1,
+                tip: "Export shortcut (Ctrl/Cmd + M)"
+            },
+            {
+                id: 27,
+                domain: 5,
+                question: "What setting defines the exact start and end section of the Timeline to be rendered during export?",
+                options: ["In and Out Points (I / O)", "Work Area Bars only", "Selected Clips only", "Marker Points"],
+                correct: 0,
+                tip: "In (I) and Out (O) export bounds"
+            },
+            {
+                id: 28,
+                domain: 5,
+                question: "What background application can you queue exports to so you can continue editing in Premiere Pro?",
+                options: ["Adobe After Effects", "Adobe Media Encoder", "Adobe Audition", "Adobe Bridge"],
+                correct: 1,
+                tip: "Adobe Media Encoder queueing"
+            },
+            {
+                id: 29,
+                domain: 5,
+                question: "If your exported video file has black bars on the top and sides (letterboxing/pillarboxing), what is the most likely cause?",
+                options: ["Bitrate is set too low", "Export resolution aspect ratio does not match sequence aspect ratio", "Audio sampling rate is wrong", "FPS is too high"],
+                correct: 1,
+                tip: "Aspect ratio mismatch on export"
+            },
+            {
+                id: 30,
+                domain: 5,
+                question: "What does 'Bitrate' in export settings directly affect?",
+                options: ["Video frame rate speed", "File size and visual compression quality", "Audio volume level", "Color temperature"],
+                correct: 1,
+                tip: "Bitrate impact on quality & size"
+            }
+        ];
+
+        // Domain Titles Mapping
+        const DOMAINS = {
+            1: { title: "Interface & Editing Tools", desc: "Navigating Premiere, shortkeys, and timeline tools." },
+            2: { title: "Sequences & Aspect Ratios", desc: "Resolution settings, frame rates, and video dimensions." },
+            3: { title: "Audio Editing & Leveling", desc: "Audio levels, essential sound, keyframes, and crossfades." },
+            4: { title: "Lumetri Color & Correction", desc: "Color grading, white balance, LUTs, and adjustment layers." },
+            5: { title: "Exporting & Media Codecs", desc: "H.264 formats, render settings, and export workflows." }
+        };
+
+        // App State
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let studentInfo = { name: '', id: '' };
+        let startTime = null;
+        let timerInterval = null;
+
+        // Initialize Application
+        window.addEventListener('DOMContentLoaded', function() {
+            var savedUrl = localStorage.getItem('ual_gsheet_url');
+            if (savedUrl) {
+                document.getElementById('gsheet-url-input').value = savedUrl;
+            }
+        });
+
+        // Toggle Settings Modal
+        function toggleSettingsModal() {
+            var modal = document.getElementById('settings-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Save Google Sheet URL
+        function saveGSheetUrl() {
+            var url = document.getElementById('gsheet-url-input').value.trim();
+            localStorage.setItem('ual_gsheet_url', url);
+            toggleSettingsModal();
+            alert("Google Sheet URL saved successfully!");
+        }
+
+        // Start Assessment
+        function startAssessment(e) {
+            e.preventDefault();
+            var name = document.getElementById('student-name').value.trim();
+            var id = document.getElementById('student-id').value.trim();
+
+            if (!name || !id) return;
+
+            studentInfo.name = name;
+            studentInfo.id = id;
+
+            document.getElementById('registration-view').classList.add('hidden');
+            document.getElementById('assessment-view').classList.remove('hidden');
+            document.getElementById('timer-badge').classList.remove('hidden');
+            document.getElementById('timer-badge').classList.add('flex');
+
+            startTime = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+
+            renderQuestion();
+        }
+
+        // Timer Update
+        function updateTimer() {
+            var now = new Date();
+            var diffSeconds = Math.floor((now - startTime) / 1000);
+            var mins = Math.floor(diffSeconds / 60).toString().padStart(2, '0');
+            var secs = (diffSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('timer-text').textContent = mins + ":" + secs;
+        }
+
+        // Render Question
+        function renderQuestion() {
+            var q = questions[currentQuestionIndex];
+            
+            // Progress Update
+            document.getElementById('question-progress-label').textContent = "Question " + (currentQuestionIndex + 1) + " of " + questions.length;
+            document.getElementById('domain-badge').textContent = DOMAINS[q.domain].title;
+            
+            var progressPercent = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-bar-fill').style.width = progressPercent + "%";
+
+            // Question Text
+            document.getElementById('question-title').textContent = (currentQuestionIndex + 1) + ". " + q.question;
+
+            // Options Container
+            var container = document.getElementById('options-container');
+            container.innerHTML = "";
+
+            q.options.forEach(function(optText, optIdx) {
+                var isSelected = userAnswers[q.id] === optIdx;
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = function() { selectAnswer(q.id, optIdx); };
+                
+                var baseClasses = "w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between text-sm font-medium ";
+                if (isSelected) {
+                    btn.className = baseClasses + "bg-purple-600/20 border-purple-500 text-white shadow-md shadow-purple-900/20";
+                } else {
+                    btn.className = baseClasses + "bg-slate-900/60 border-slate-700/80 text-slate-300 hover:bg-slate-700/50 hover:border-slate-600";
+                }
+
+                var labelSpan = document.createElement('span');
+                labelSpan.textContent = optText;
+
+                var icon = document.createElement('i');
+                if (isSelected) {
+                    icon.className = "fa-solid fa-circle-check text-purple-400 text-base ml-2";
+                } else {
+                    icon.className = "fa-regular fa-circle text-slate-500 text-base ml-2";
+                }
+
+                btn.appendChild(labelSpan);
+                btn.appendChild(icon);
+                container.appendChild(btn);
+            });
+
+            // Nav Buttons
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            
+            var nextBtn = document.getElementById('next-btn');
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.innerHTML = '<span>Submit Assessment</span> <i class="fa-solid fa-check ml-2"></i>';
+                nextBtn.className = "px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold rounded-xl transition-colors shadow-lg shadow-emerald-900/40";
+            } else {
+                nextBtn.innerHTML = 'Next <i class="fa-solid fa-chevron-right ml-2"></i>';
+                nextBtn.className = "px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold rounded-xl transition-colors shadow-lg shadow-purple-900/40";
+            }
+        }
+
+        // Select Answer
+        function selectAnswer(qId, optIdx) {
+            userAnswers[qId] = optIdx;
+            renderQuestion();
+        }
+
+        // Navigation Handlers
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                finishAssessment();
+            }
+        }
+
+        // Finish Assessment
+        function finishAssessment() {
+            clearInterval(timerInterval);
+
+            // Calculate Scores per Domain
+            var domainScores = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+            var domainTotals = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+            var totalScore = 0;
+
+            questions.forEach(function(q) {
+                domainTotals[q.domain]++;
+                if (userAnswers[q.id] === q.correct) {
+                    domainScores[q.domain]++;
+                    totalScore++;
+                }
+            });
+
+            var percentage = Math.round((totalScore / questions.length) * 100);
+            var timeSpent = document.getElementById('timer-text').textContent;
+
+            // Submit Data to Google Sheets
+            sendToGoogleSheet({
+                timestamp: new Date().toLocaleString('en-GB'),
+                name: studentInfo.name,
+                studentId: studentInfo.id,
+                score: totalScore,
+                percentage: percentage,
+                timeSpent: timeSpent
+            });
+
+            // Display PDF Report View
+            renderReportView(totalScore, percentage, domainScores, domainTotals);
+        }
+
+        // Submit to Google Sheet API
+        function sendToGoogleSheet(data) {
+            var sheetUrl = DEFAULT_GSHEET_URL || localStorage.getItem('ual_gsheet_url') || (document.getElementById('gsheet-url-input') ? document.getElementById('gsheet-url-input').value.trim() : '');
+            if (!sheetUrl) {
+                console.log("No Google Sheet Web App URL provided.");
+                return;
+            }
+
+            fetch(sheetUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(function() {
+                console.log("Successfully sent results to Google Sheet!");
+            }).catch(function(err) {
+                console.error("Error sending to Google Sheet:", err);
+            });
+        }
+
+        // Render Report View
+        function renderReportView(totalScore, percentage, domainScores, domainTotals) {
+            document.getElementById('assessment-view').classList.add('hidden');
+            document.getElementById('report-view').classList.remove('hidden');
+
+            // Set Header Values
+            document.getElementById('pdf-score-display').textContent = totalScore + " / " + questions.length;
+            document.getElementById('pdf-percent-display').textContent = percentage + "% Overall Score";
+            document.getElementById('pdf-student-name').textContent = studentInfo.name;
+            document.getElementById('pdf-student-id').textContent = studentInfo.id;
+            document.getElementById('pdf-date').textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+            // Strengths and Improvements lists
+            var strengthsList = document.getElementById('pdf-strengths-list');
+            var improvementsList = document.getElementById('pdf-improvements-list');
+            strengthsList.innerHTML = "";
+            improvementsList.innerHTML = "";
+
+            var strongDomainsCount = 0;
+
+            Object.keys(DOMAINS).forEach(function(dKey) {
+                var domainId = parseInt(dKey);
+                var score = domainScores[domainId];
+                var total = domainTotals[domainId];
+                var domainPct = Math.round((score / total) * 100);
+
+                if (domainPct >= 65) {
+                    strongDomainsCount++;
+                    var li = document.createElement('li');
+                    li.className = "flex items-start gap-2";
+                    li.innerHTML = '<i class="fa-solid fa-check text-emerald-600 mt-0.5"></i> <span><strong>' + DOMAINS[domainId].title + ':</strong> Demonstrates strong mastery (' + score + '/' + total + ').</span>';
+                    strengthsList.appendChild(li);
+                } else {
+                    var li = document.createElement('li');
+                    li.className = "flex items-start gap-2";
+                    li.innerHTML = '<i class="fa-solid fa-arrow-right text-amber-600 mt-0.5"></i> <span><strong>' + DOMAINS[domainId].title + ':</strong> Review recommended (' + score + '/' + total + '). Focus on ' + DOMAINS[domainId].desc + '</span>';
+                    improvementsList.appendChild(li);
+                }
+            });
+
+            // Always ensure a positive baseline key strength is listed
+            var baselineLi = document.createElement('li');
+            baselineLi.className = "flex items-start gap-2";
+            baselineLi.innerHTML = '<i class="fa-solid fa-star text-emerald-600 mt-0.5"></i> <span><strong>Foundational Readiness:</strong> You demonstrate a foundational awareness of non-linear video editing principles in Premiere Pro.</span>';
+            strengthsList.insertBefore(baselineLi, strengthsList.firstChild);
+
+            if (improvementsList.children.length === 0) {
+                var congratsLi = document.createElement('li');
+                congratsLi.className = "flex items-start gap-2";
+                congratsLi.innerHTML = '<i class="fa-solid fa-award text-amber-600 mt-0.5"></i> <span><strong>High Proficiency:</strong> Excellent performance across all core modules! Focus on advanced multicam and color grading workflows.</span>';
+                improvementsList.appendChild(congratsLi);
+            }
+
+            // Domain Breakdown List
+            var breakdownContainer = document.getElementById('pdf-domain-breakdown');
+            breakdownContainer.innerHTML = "";
+
+            Object.keys(DOMAINS).forEach(function(dKey) {
+                var domainId = parseInt(dKey);
+                var score = domainScores[domainId];
+                var total = domainTotals[domainId];
+                var domainPct = Math.round((score / total) * 100);
+
+                var row = document.createElement('div');
+                row.className = "flex items-center gap-4 text-xs";
+                
+                var titleSpan = document.createElement('span');
+                titleSpan.className = "w-48 font-medium text-slate-700 truncate";
+                titleSpan.textContent = DOMAINS[domainId].title;
+
+                var barBg = document.createElement('div');
+                barBg.className = "flex-1 bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200";
+
+                var barFill = document.createElement('div');
+                barFill.className = domainPct >= 65 ? "bg-emerald-500 h-full" : "bg-amber-500 h-full";
+                barFill.style.width = domainPct + "%";
+                barBg.appendChild(barFill);
+
+                var scoreSpan = document.createElement('span');
+                scoreSpan.className = "w-16 text-right font-bold text-slate-800";
+                scoreSpan.textContent = score + " / " + total;
+
+                row.appendChild(titleSpan);
+                row.appendChild(barBg);
+                row.appendChild(scoreSpan);
+                breakdownContainer.appendChild(row);
+            });
+        }
+
+        // Download PDF Report
+        function downloadPDFReport() {
+            var element = document.getElementById('pdf-report-content');
+            var cleanName = (studentInfo.name || 'Student').replace(/[^a-zA-Z0-9]/g, '_');
+
+            var opt = {
+                margin: [0.3, 0.3, 0.3, 0.3],
+                filename: 'Premiere_Pro_Diagnostic_' + cleanName + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
