@@ -229,6 +229,18 @@
                     </div>
                 </div>
 
+                <!-- Recommended YouTube Tutorials Section -->
+                <div class="pt-4 border-t border-slate-200">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <i class="fa-brands fa-youtube text-red-600 text-sm"></i>
+                        Recommended Learning & Video Tutorials
+                    </h3>
+                    <p class="text-[11px] text-slate-500 mb-3">Tailored YouTube tutorials to help you improve your skills based on your diagnostic results:</p>
+                    <div id="pdf-youtube-recommendations" class="grid sm:grid-cols-2 gap-2 text-xs">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
                 <!-- Footer -->
                 <div class="pt-4 border-t border-slate-200 text-center text-[10px] text-slate-400">
                     UAL Creative Media Production & Technology • Premiere Pro Baseline Diagnostic Tool
@@ -394,11 +406,11 @@
                 tip: "Audio crossfade transitions"
             },
 
-            // Domain 4: Lumetri Colour & Correction (6 Questions)
+            // Domain 4: Colour Grading & Correction (6 Questions)
             {
                 id: 19,
                 domain: 4,
-                question: "Which specialized panel is the main workspace for colour correction and grading in Premiere Pro?",
+                question: "Which specialised panel is the main workspace for colour correction and grading in Premiere Pro?",
                 options: ["Lumetri Color Panel", "Colour Matte Panel", "Effect Controls", "Metadata Panel"],
                 correct: 0,
                 tip: "Lumetri Color workspace"
@@ -430,7 +442,7 @@
             {
                 id: 23,
                 domain: 4,
-                question: "Which Lumetri slider specifically controls the intensity/vibrancy of duller colours without oversaturating already bright skin tones?",
+                question: "Which Lumetri Colour control selectively boosts lower-saturated tones while protecting already saturated areas and skin tones from unnatural oversaturation?",
                 options: ["Saturation", "Vibrance", "Exposure", "Shadows"],
                 correct: 1,
                 tip: "Vibrance vs Saturation control"
@@ -438,8 +450,8 @@
             {
                 id: 24,
                 domain: 4,
-                question: "In primary colour correction, what does lowering the 'Blacks' slider do?",
-                options: ["Makes white areas darker", "Deepens the darkest shadow points in the image", "Blurs the background", "Removes colour saturation"],
+                question: "When performing primary colour correction, what visual effect does reducing the black tones have on the image?",
+                options: ["It darkens overall highlights", "It sets the absolute darkest pixel threshold to deepen shadow contrast", "It blurs the background shadows", "It removes colour tint from midtones"],
                 correct: 1,
                 tip: "Shadows and Blacks tonal adjustment"
             },
@@ -497,11 +509,31 @@
 
         // Domain Titles Mapping (British English)
         const DOMAINS = {
-            1: { title: "Interface & Editing Tools", desc: "Navigating Premiere, shortkeys, and timeline tools." },
-            2: { title: "Sequences & Aspect Ratios", desc: "Resolution settings, UK frame rates, and video dimensions." },
-            3: { title: "Audio Editing & Levelling", desc: "Audio levels, essential sound, keyframes, and crossfades." },
-            4: { title: "Lumetri Colour & Correction", desc: "Colour grading, white balance, LUTs, and adjustment layers." },
-            5: { title: "Exporting & Media Codecs", desc: "H.264 formats, render settings, and export workflows." }
+            1: { 
+                title: "Interface & Editing Tools", 
+                desc: "Navigating Premiere, shortkeys, and timeline tools.",
+                youtube: { title: "Premiere Pro Interface & Tools Essentials", url: "https://www.youtube.com/results?search_query=premiere+pro+interface+tools+beginner+tutorial" }
+            },
+            2: { 
+                title: "Sequences & Aspect Ratios", 
+                desc: "Resolution settings, UK frame rates, and video dimensions.",
+                youtube: { title: "Sequence Settings & Aspect Ratios Guide", url: "https://www.youtube.com/results?search_query=premiere+pro+sequence+settings+aspect+ratios+frame+rate" }
+            },
+            3: { 
+                title: "Audio Editing", 
+                desc: "Audio levels, essential sound, keyframes, and crossfades.",
+                youtube: { title: "Audio Levelling & Essential Sound Tutorial", url: "https://www.youtube.com/results?search_query=premiere+pro+essential+sound+audio+leveling" }
+            },
+            4: { 
+                title: "Colour Grading & Correction", 
+                desc: "Colour grading, white balance, LUTs, and adjustment layers.",
+                youtube: { title: "Lumetri Colour Correction & Grading Masterclass", url: "https://www.youtube.com/results?search_query=premiere+pro+lumetri+color+grading+tutorial" }
+            },
+            5: { 
+                title: "Exporting & Media Codecs", 
+                desc: "H.264 formats, render settings, and export workflows.",
+                youtube: { title: "Best Premiere Pro Export Settings (H.264)", url: "https://www.youtube.com/results?search_query=premiere+pro+best+export+settings+h264" }
+            }
         };
 
         // App State
@@ -783,6 +815,35 @@
                 row.appendChild(barBg);
                 row.appendChild(scoreSpan);
                 breakdownContainer.appendChild(row);
+            });
+
+            // Populate YouTube Video Suggestions
+            var ytContainer = document.getElementById('pdf-youtube-recommendations');
+            ytContainer.innerHTML = "";
+
+            Object.keys(DOMAINS).forEach(function(dKey) {
+                var domainId = parseInt(dKey);
+                var score = domainScores[domainId];
+                var total = domainTotals[domainId];
+                var domainPct = Math.round((score / total) * 100);
+                var dom = DOMAINS[domainId];
+
+                var ytCard = document.createElement('a');
+                ytCard.href = dom.youtube.url;
+                ytCard.target = "_blank";
+                ytCard.rel = "noopener noreferrer";
+                ytCard.className = "p-2.5 rounded-lg border transition-colors flex items-center justify-between gap-2 text-decoration-none " + 
+                    (domainPct < 65 ? "bg-amber-50 border-amber-200 text-amber-900 hover:bg-amber-100" : "bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100");
+
+                ytCard.innerHTML = '<div>' +
+                    '<div class="font-bold flex items-center gap-1.5 text-[11px]">' +
+                        '<i class="fa-brands fa-youtube text-red-600"></i>' + dom.title +
+                    '</div>' +
+                    '<div class="text-[10px] text-slate-500 truncate max-w-[200px]">' + dom.youtube.title + '</div>' +
+                '</div>' +
+                '<i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>';
+
+                ytContainer.appendChild(ytCard);
             });
         }
 
